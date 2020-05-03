@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">UdpStream</string>
+    <string name="text_test">Tela Principal de testes</string>
+    <string name="player">Play</string>
+    <string name="cancel">Cancelar</string>
+    <string name="save">Salvar</string>
+    <string name="add">Adicionar</string>
+    <string name="edition">Edição</string>
+    <string name="edit">Editar</string>
+    <string name="delete">Deletar</string>
+
+    <string name="Text_EDIT">Informe os dados abaixo</string>
+    <string name="Text_name">Informe o nome do canal:</string>
+    <string name="hint_name">Globo</string>
+    <string name="text_ip">Informe o IP: </string>
+    <string name="hint_ip">10.10.10.10</string>
+    <string name="text_port">Informe a porta:</string>
+    <string name="port">8000</string>
+
+    <string name="no_value">NaN</string>
+    <string name="image">Logo</string>
+</resources>
