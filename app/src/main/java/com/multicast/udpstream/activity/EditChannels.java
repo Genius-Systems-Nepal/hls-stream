@@ -57,9 +57,9 @@ public class EditChannels extends AppCompatActivity {
             Matcher matcherIp = patternIp.matcher(textEditIp.getText().toString());
 
             Pattern patternPort = Pattern.compile(regexPort);
-            Matcher matchePort = patternPort.matcher(textEditPort.getText().toString());
+            Matcher matcherPort = patternPort.matcher(textEditPort.getText().toString());
 
-            if(matcherIp.matches() && matchePort.matches()){
+            if(matcherIp.matches() && matcherPort.matches()){
                 if (channelAtual != null) {//Edit
 
                     Channel channel = new Channel();
@@ -90,10 +90,11 @@ public class EditChannels extends AppCompatActivity {
                     }
                 }
             }else {
-                if (matcherIp.matches()) {
-                    textEditPort.setError("Porta inválida!");
-                } else {
+                if (!matcherIp.matches()) {
                     textEditIp.setError("Ip inválido!");
+                }
+                if (!matcherPort.matches()){
+                    textEditPort.setError("Porta inválida!");
                 }
             }
         });
