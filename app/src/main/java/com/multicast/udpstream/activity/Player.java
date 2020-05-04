@@ -18,6 +18,8 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.UdpDataSource;
@@ -56,7 +58,15 @@ public class Player extends AppCompatActivity {
 
     private void initializePlayer(){
 
-        player = new SimpleExoPlayer.Builder(this).build();
+        DefaultTrackSelector trackSelector = new DefaultTrackSelector(this);
+
+        trackSelector.setParameters(
+                trackSelector
+                        .buildUponParameters()
+                        .setMaxVideoSizeSd()
+                        .setPreferredAudioLanguage("en-und2"));
+
+        player = new SimpleExoPlayer.Builder(this).setTrackSelector(trackSelector).build();
 
         playerView.setPlayer(player);
 
