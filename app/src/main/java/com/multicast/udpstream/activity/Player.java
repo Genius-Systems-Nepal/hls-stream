@@ -12,16 +12,20 @@ import android.widget.Toast;
 
 
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 
 
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.UdpDataSource;
 import com.google.android.exoplayer2.util.Util;
 import com.multicast.udpstream.R;
@@ -63,41 +67,33 @@ public class Player extends AppCompatActivity {
         trackSelector.setParameters(
                 trackSelector
                         .buildUponParameters()
+                        .setRendererDisabled(C.TRACK_TYPE_VIDEO, true)
+                        .setRendererDisabled(C.TRACK_TYPE_AUDIO, true)
                         .setMaxVideoSizeSd()
                         .setPreferredAudioLanguage("en-und2"));
 
-        player = new SimpleExoPlayer.Builder(this).setTrackSelector(trackSelector).build();
+
+        DefaultRenderersFactory defaultRenderersFactory = new DefaultRenderersFactory(this);
+        defaultRenderersFactory.setEnableDecoderFallback(true);
+        defaultRenderersFactory.setEnableAudioFloatOutput(true);
+        defaultRenderersFactory.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON);
+
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(this, "exoplayer-codelab");
+
+        MediaSource mediaSource = new HlsMediaSource.Factory(dataSourceFactory).createMediaSource(
+                MediaItem.fromUri(Uri.parse("http://180.188.254.253:8081/iptvdvr/StarBharatHD/playlist.m3u8")
+                ));
+
+
+        player = new SimpleExoPlayer.Builder(this, defaultRenderersFactory).setTrackSelector(trackSelector).build();
 
         playerView.setPlayer(player);
-
-        ConcatenatingMediaSource mediaSource = buildDataSourceFactory();
 
         player.prepare(mediaSource);
         player.seekTo(index, C.TIME_UNSET);
         player.setPlayWhenReady(true);
 
         hideSystemUi();
-    }
-
-    private ConcatenatingMediaSource buildDataSourceFactory(){
-
-        UdpDataSource.Factory udp = () -> new UdpDataSource(3000, 100000);
-        ConcatenatingMediaSource mediaSources = new ConcatenatingMediaSource();
-
-        for (int i = 0; channelList.size() > i; i++){
-            channel = channelList.get(i);
-
-            if(ip.equals(channel.getIp())){
-                index = i;
-            }
-
-            MediaSource mediaSource = new ProgressiveMediaSource
-                    .Factory(udp)
-                    .createMediaSource(Uri.parse("udp://@"+channel.getIp()));
-
-            mediaSources.addMediaSource(mediaSource);
-        }
-        return mediaSources;
     }
 
     private void releasePlayer(){
